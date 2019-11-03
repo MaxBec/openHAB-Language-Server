@@ -1,0 +1,18 @@
+{
+	"name": "openhab-lsp-server",
+	"description": "Server Part of the openHAB Language server extension",
+	"version": "0.0.1",
+	"author": "Max Beckenbauer",
+	"license": "EPL-2.0",
+	"engines": {
+		"node": "*"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/MaxBec/openHAB-Language-Server"
+	},
+	"dependencies": {
+		"vscode-languageserver": "^5.2.1"
+	},
+	"scripts": {}
+}
