@@ -3,19 +3,7 @@
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 
-import {
-	createConnection,
-	TextDocuments,
-	TextDocument,
-	Diagnostic,
-	DiagnosticSeverity,
-	ProposedFeatures,
-	InitializeParams,
-	DidChangeConfigurationNotification,
-	CompletionItem,
-	CompletionItemKind,
-	TextDocumentPositionParams
-} from 'vscode-languageserver';
+import { createConnection, TextDocuments, TextDocument, Diagnostic, DiagnosticSeverity, ProposedFeatures, InitializeParams, DidChangeConfigurationNotification, CompletionItem, CompletionItemKind, TextDocumentPositionParams } from "vscode-languageserver";
 
 // Create a connection for the server. The connection uses Node's IPC as a transport.
 // Also include all preview / proposed LSP features.
@@ -34,17 +22,9 @@ connection.onInitialize((params: InitializeParams) => {
 
 	// Does the client support the `workspace/configuration` request?
 	// If not, we will fall back using global settings
-	hasConfigurationCapability = !!(
-		capabilities.workspace && !!capabilities.workspace.configuration
-	);
-	hasWorkspaceFolderCapability = !!(
-		capabilities.workspace && !!capabilities.workspace.workspaceFolders
-	);
-	hasDiagnosticRelatedInformationCapability = !!(
-		capabilities.textDocument &&
-		capabilities.textDocument.publishDiagnostics &&
-		capabilities.textDocument.publishDiagnostics.relatedInformation
-	);
+	hasConfigurationCapability = !!(capabilities.workspace && !!capabilities.workspace.configuration);
+	hasWorkspaceFolderCapability = !!(capabilities.workspace && !!capabilities.workspace.workspaceFolders);
+	hasDiagnosticRelatedInformationCapability = !!(capabilities.textDocument && capabilities.textDocument.publishDiagnostics && capabilities.textDocument.publishDiagnostics.relatedInformation);
 
 	return {
 		capabilities: {
@@ -64,7 +44,7 @@ connection.onInitialized(() => {
 	}
 	if (hasWorkspaceFolderCapability) {
 		connection.workspace.onDidChangeWorkspaceFolders(_event => {
-			connection.console.log('Workspace folder change event received.');
+			connection.console.log("Workspace folder change event received.");
 		});
 	}
 });
@@ -88,9 +68,7 @@ connection.onDidChangeConfiguration(change => {
 		// Reset all cached document settings
 		documentSettings.clear();
 	} else {
-		globalSettings = <ExampleSettings>(
-			(change.settings.languageServerExample || defaultSettings)
-		);
+		globalSettings = <ExampleSettings>(change.settings.openhabLanguageServer || defaultSettings);
 	}
 
 	// Revalidate all open text documents
@@ -105,7 +83,7 @@ function getDocumentSettings(resource: string): Thenable<ExampleSettings> {
 	if (!result) {
 		result = connection.workspace.getConfiguration({
 			scopeUri: resource,
-			section: 'languageServerExample'
+			section: "openhabLanguageServer"
 		});
 		documentSettings.set(resource, result);
 	}
@@ -143,7 +121,7 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
 				end: textDocument.positionAt(m.index + m[0].length)
 			},
 			message: `${m[0]} is all uppercase.`,
-			source: 'ex'
+			source: "ex"
 		};
 		if (hasDiagnosticRelatedInformationCapability) {
 			diagnostic.relatedInformation = [
@@ -152,14 +130,14 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
 						uri: textDocument.uri,
 						range: Object.assign({}, diagnostic.range)
 					},
-					message: 'Spelling matters'
+					message: "Spelling matters"
 				},
 				{
 					location: {
 						uri: textDocument.uri,
 						range: Object.assign({}, diagnostic.range)
 					},
-					message: 'Particularly for names'
+					message: "Particularly for names"
 				}
 			];
 		}
@@ -172,40 +150,38 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
 
 connection.onDidChangeWatchedFiles(_change => {
 	// Monitored files have change in VSCode
-	connection.console.log('We received an file change event');
+	connection.console.log("We received an file change event");
 });
 
 // This handler provides the initial list of the completion items.
-connection.onCompletion(
-	(_textDocumentPosition: TextDocumentPositionParams): CompletionItem[] => {
-		// The pass parameter contains the position of the text document in
-		// which code complete got requested. For the example we ignore this
-		// info and always provide the same completion items.
-		return [
-			{
-				label: 'TypeScript',
-				kind: CompletionItemKind.Text,
-				data: 1
-			},
-			{
-				label: 'JavaScript',
-				kind: CompletionItemKind.Text,
-				data: 2
-			}
-		];
-	}
-);
+connection.onCompletion((_textDocumentPosition: TextDocumentPositionParams): CompletionItem[] => {
+	// The pass parameter contains the position of the text document in
+	// which code complete got requested. For the example we ignore this
+	// info and always provide the same completion items.
+	return [
+		{
+			label: "TypeScript",
+			kind: CompletionItemKind.Text,
+			data: 1
+		},
+		{
+			label: "JavaScript",
+			kind: CompletionItemKind.Text,
+			data: 2
+		}
+	];
+});
 
 // This handler resolves additional information for the item selected in
 // the completion list.
 connection.onCompletionResolve(
 	(item: CompletionItem): CompletionItem => {
 		if (item.data === 1) {
-			item.detail = 'TypeScript details';
-			item.documentation = 'TypeScript documentation';
+			item.detail = "TypeScript details";
+			item.documentation = "TypeScript documentation";
 		} else if (item.data === 2) {
-			item.detail = 'JavaScript details';
-			item.documentation = 'JavaScript documentation';
+			item.detail = "JavaScript details";
+			item.documentation = "JavaScript documentation";
 		}
 		return item;
 	}
